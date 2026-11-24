@@ -1,0 +1,15 @@
+sample_id	n_peaks	median_width	covered_mb	mean_overlap_with_others	best_overlap_within_group	flagged	reason	tissue
+P17621953_normal	36384	3200	148.37	0.32167	0.45583	False		normal
+P17621953_tumour	53500	2750	199.99	0.36268	0.59077	False		tumour
+P40911432_normal	122760	2050	392.16	0.33251	0.53348	False		normal
+P40911432_tumour	104240	2700	462.35	0.32828	0.56581	False		tumour
+P57398667_normal	16848	1050	20.736	0.10209	0.29146	True	peaks overlap little with the other samples	normal
+P57398667_tumour	35884	1650	80.225	0.23076	0.31981	True	peaks overlap little with the other samples	tumour
+P70528835_normal	156460	1050	293.67	0.33812	0.48246	False		normal
+P70528835_tumour	146900	1100	291.53	0.3452	0.4806	False		tumour
+P75416923_normal	29965	1050	41.033	0.17591	0.29146	True	peaks overlap little with the other samples	normal
+P75416923_tumour	42691	1050	55.63	0.183	0.31981	True	peaks overlap little with the other samples	tumour
+P77972083_normal	68351	2450	224.9	0.34216	0.45583	False		normal
+P77972083_tumour	48571	3250	216.74	0.36441	0.59077	False		tumour
+P86049102_normal	110400	2500	417.28	0.33014	0.53348	False		normal
+P86049102_tumour	98862	2450	381.59	0.34564	0.56581	False		tumour

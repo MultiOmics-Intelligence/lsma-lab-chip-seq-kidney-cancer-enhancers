@@ -1,0 +1,112 @@
+{
+  "workflow": "peaks",
+  "workflow_version": "1.0.0",
+  "random_seed": 42,
+  "genome": "hg19",
+  "lab_run_time": "2 min 15 s (upload of 20 peak files: 2 s)",
+  "validation_run_time": "1 min 40 s (cell lines, 8 peak files)",
+  "excluded_pairs": {
+    "P12364284": "normal sample has 1,845 peaks",
+    "P74575859": "normal sample has 1,627 peaks",
+    "P20431713": "tumour sample has 5,945 peaks"
+  },
+  "parameters": {
+    "input": {
+      "genome": "hg19",
+      "sample_preparation": {
+        "version": 1,
+        "condition": "tissue",
+        "relabel": {},
+        "groups": [
+          "normal",
+          "tumour"
+        ],
+        "reference": "normal",
+        "excluded": {
+          "P12364284_normal": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab",
+          "P12364284_tumour": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab",
+          "P74575859_normal": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab",
+          "P74575859_tumour": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab",
+          "P20431713_normal": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab",
+          "P20431713_tumour": "Left out: a very shallow sample in this pair (fewer than 6,000 peaks against a median of about 40,000), flagged by the lab"
+        },
+        "covariates": [
+          "patient"
+        ],
+        "pairing": "patient"
+      }
+    },
+    "peak_qc": {
+      "group_column": null,
+      "min_peaks_fraction": 0.25,
+      "outlier_mad": 3
+    },
+    "consensus": {
+      "min_samples": 2,
+      "merge_gap": 0,
+      "group_column": null
+    },
+    "annotation": {
+      "promoter_upstream": 3000,
+      "promoter_downstream": 3000
+    },
+    "differential": {
+      "group_column": "tissue",
+      "test_level": "tumour",
+      "reference_level": "normal",
+      "min_fraction_present": 0.75,
+      "max_fraction_absent": 0
+    },
+    "enrichment": {
+      "enabled": true,
+      "collections": [
+        "hallmark",
+        "go_bp"
+      ],
+      "max_distance_kb": 50,
+      "peak_location": "all",
+      "padj_cutoff": 0.05,
+      "min_set_size": 10,
+      "max_set_size": 500,
+      "p_adjust_method": "BH"
+    }
+  },
+  "software_versions": {
+    "input": {
+      "R": "4.5.2",
+      "jsonlite": "2.0.0",
+      "GenomicRanges": "1.60.0",
+      "Bioconductor": "3.21"
+    },
+    "peak_qc": {
+      "R": "4.5.2",
+      "GenomicRanges": "1.60.0",
+      "Bioconductor": "3.21"
+    },
+    "consensus": {
+      "R": "4.5.2",
+      "GenomicRanges": "1.60.0",
+      "Bioconductor": "3.21"
+    },
+    "annotation": {
+      "R": "4.5.2",
+      "ChIPseeker": "1.44.0",
+      "TxDb.Hsapiens.UCSC.hg19.knownGene": "3.2.2",
+      "org.Hs.eg.db": "3.21.0",
+      "GenomicRanges": "1.60.0",
+      "Bioconductor": "3.21"
+    },
+    "differential": {
+      "R": "4.5.2",
+      "GenomicRanges": "1.60.0",
+      "Bioconductor": "3.21"
+    },
+    "enrichment": {
+      "R": "4.5.2",
+      "clusterProfiler": "4.16.0",
+      "msigdbr": "26.1.1",
+      "org.Hs.eg.db": "3.21.0",
+      "Bioconductor": "3.21"
+    }
+  }
+}
