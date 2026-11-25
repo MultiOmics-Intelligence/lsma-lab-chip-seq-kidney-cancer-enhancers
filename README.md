@@ -180,7 +180,7 @@ A and B are the stretches of genome covered by the peaks of two samples, and |·
 **Sample flags**
 
 $$
-n_s < 0.25 \cdot \operatorname{median}(n) \quad \text{or} \quad \bar{J}_s < \operatorname{median}(\bar{J}) - 3 \cdot \operatorname{MAD}(\bar{J})
+n_s < 0.25 \cdot \mathrm{median}(n) \quad \text{or} \quad \bar{J}_s < \mathrm{median}(\bar{J}) - 3 \cdot \mathrm{MAD}(\bar{J})
 $$
 
 Here $n_s$ is the number of peaks of sample s, and $\bar J_s$ is its mean Jaccard index with every other sample. MAD is the median absolute deviation, scaled by 1.4826 so that it matches the standard deviation for normal data; an overlap flag also needs the sample to lie at least 0.05 below the median. A flag is a prompt to look, not an automatic removal.
