@@ -165,6 +165,74 @@ Every step below is a stage in the LSMA Analysis Lab, run with the settings in [
 
 **Software:** R 4.5.2 and Bioconductor 3.21, with GenomicRanges, ChIPseeker, TxDb.Hsapiens.UCSC.hg19.knownGene and clusterProfiler, in the versions listed in the settings file.
 
+## The mathematics behind the methods
+
+The formulas below are the ones the lab's code runs. Peak files hold no read counts, so every measure is built on where peaks are, not on how strong they are.
+
+**Overlap between two samples (Jaccard index)**
+
+$$
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
+$$
+
+A and B are the stretches of genome covered by the peaks of two samples, and |·| counts base pairs. J is 1 when the two samples have peaks in exactly the same places and 0 when they share none. This is the overlap shown in the sample-overlap heatmap.
+
+**Sample flags**
+
+$$
+n_s < 0.25 \cdot \operatorname{median}(n) \quad \text{or} \quad \bar{J}_s < \operatorname{median}(\bar{J}) - 3 \cdot \operatorname{MAD}(\bar{J})
+$$
+
+Here $n_s$ is the number of peaks of sample s, and $\bar J_s$ is its mean Jaccard index with every other sample. MAD is the median absolute deviation, scaled by 1.4826 so that it matches the standard deviation for normal data; an overlap flag also needs the sample to lie at least 0.05 below the median. A flag is a prompt to look, not an automatic removal.
+
+**Consensus regions and the presence matrix**
+
+$$
+O_{rs} = \mathbf{1}\left[\text{sample } s \text{ has a peak overlapping region } r\right], \qquad \text{keep } r \text{ if } \sum_{s} O_{rs} \ge 2
+$$
+
+The peaks of all samples are pooled, and peaks that overlap or touch are merged into one region r. The matrix O holds 1 when a sample has a peak in a region and 0 when it has none. Regions with a peak in at least 2 samples were kept: 104,054 of 178,507.
+
+**Tumour against normal by presence**
+
+$$
+f_T(r) = \frac{1}{n_T} \sum_{s \in T} O_{rs}, \qquad \text{only in tumour: } f_T(r) \ge 0.75 \ \text{and} \ f_N(r) = 0
+$$
+
+$f_T(r)$ is the share of the $n_T$ tumour samples with a peak in region r, and $f_N(r)$ the same share for the normal samples. "Only in normal" is the mirror rule. The looser rule in the Key findings uses the difference between the two shares, at least 0.5. These are descriptions of the peak calls; no p-value is attached.
+
+**PCA of peak presence**
+
+$$
+\tilde{O}_{sr} = O_{sr} - \bar{O}_r, \qquad \tilde{O} = U \Sigma V^{\top}, \qquad \text{share of variance}_k = \frac{\sigma_k^2}{\sum_j \sigma_j^2}
+$$
+
+Each sample is a row of 0s and 1s over the regions that are not shared by all samples, centred on each region's mean but not scaled. The singular value decomposition gives the principal components; the sample scores are the rows of UΣ and $\sigma_k$ is the k-th singular value. This is where the 35% (PC1, patient) and 13% (PC2, tissue) come from.
+
+**Assigning regions to genes**
+
+$$
+\text{promoter: } |d_r| \le 3 \text{ kb}, \qquad \text{gene used for gene sets: } |d_r| \le 50 \text{ kb}
+$$
+
+$d_r$ is the distance from region r to the nearest transcription start site in the UCSC hg19 gene model, found by ChIPseeker; it takes the gene's strand into account and is negative when the region lies upstream. Regions within 3 kb either side of a start site are called promoters, and the nearest gene is used for the gene-set step only when it is within 50 kb.
+
+**Gene-set over-representation (hypergeometric test)**
+
+$$
+p = \sum_{j=k}^{\min(n,K)} \frac{\binom{K}{j}\binom{N-K}{n-j}}{\binom{N}{n}}, \qquad \text{fold enrichment} = \frac{k/n}{K/N}
+$$
+
+N is the number of background genes (genes within 50 kb of any compared region that belong to at least one set), K of them are in a given Hallmark or GO set, n is the number of genes near the tumour-only (or normal-only) regions and k of those are in the set. The p-value is the chance of k or more by random picking, and sets of 10 to 500 genes were tested.
+
+**Benjamini–Hochberg adjustment**
+
+$$
+p^{\text{adj}}_{(i)} = \min_{j \ge i} \ \min\left(1,\ \frac{m \cdot p_{(j)}}{j}\right)
+$$
+
+The m p-values of one test series are sorted, $p_{(1)} \le \dots \le p_{(m)}$, and each is scaled by m divided by its rank. Keeping sets with an adjusted p below 0.05 limits the expected share of false discoveries among them to 5%.
+
 ---
 
 ## Validation
